@@ -8,13 +8,11 @@ void MlirGenerator::generateMainFunction() {
   mainFunction = GeneratorFunction(-1);
   mainFunction.addLine(
       {"module {",
-       "  func.func @main(%argc : i32, %argv : !llvm.ptr) -> f32 {"
+       "  func.func @main() -> f32 {"
         "",
           "    %c0_i64 = arith.constant 0 : i64",
-          "    %arg0_ptr_addr = llvm.getelementptr %argv[%c0_i64] : (!llvm.ptr, i64) -> !llvm.ptr, !llvm.ptr",
-          "    %arg0 = llvm.load %arg0_ptr_addr : !llvm.ptr -> !llvm.ptr",
-          "    %ptr_val = llvm.ptrtoint %arg0 : !llvm.ptr to i64",
-          "    %zero_i64 = arith.constant 0 : i64",
+          "    %argv_mock = llvm.mlir.zero : !llvm.ptr",
+          "    %ptr_val = llvm.ptrtoint %argv_mock : !llvm.ptr to i64",
           "    %ret = arith.constant 0.0 : f32\n",
        "       func.return %ret : f32\n    }",
        "}",
