@@ -42,7 +42,7 @@ void MlirCondOp::gen(ProgrammingLanguageGenerator& generator) {
 
     RegInfo reg = regcontrol->registers[(int)rand() % regcontrol->registers.size()];
     
-    std::string condition_id = std::to_string((int)(rand()%500));
+    std::string condition_id = std::to_string(Registers::REGISTER_COUNTER++);
     std::string type = reg.type;
     std::string cond_reg;
     std::string line;
@@ -61,6 +61,7 @@ void MlirCondOp::gen(ProgrammingLanguageGenerator& generator) {
         Registers::REGISTER_COUNTER++;
     }else{
         generator.addLine("%condition"+condition_id+" = arith.cmpi ne," +reg.name+", %zero_i64 : i64");
+        Registers::REGISTER_COUNTER++;
     }
     
     std::string condition = "%condition"+condition_id;
