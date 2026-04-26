@@ -41,21 +41,31 @@ void MlirCondOp::gen(ProgrammingLanguageGenerator& generator) {
     generator.ifCounter.top()++;
 
     RegInfo reg = regcontrol->registers[(int)rand() % regcontrol->registers.size()];
-    std::string condition = reg.name;
+    
+    std::string condition_id = std::to_string((int)(rand()%500));
     std::string type = reg.type;
-    std::string line;
     std::string cond_reg;
+    std::string line;
 
-    if (type != "i1"){
-        cond_reg = "%"+std::to_string(Registers::REGISTER_COUNTER);
-        line = cond_reg+" = arith.trunci " + condition + " : " + type + " to i1";
+    if (std::stoi(type.substr(1)) > 64){
+        cond_reg = "%rc"+std::to_string(Registers::REGISTER_COUNTER);
+        line = cond_reg+" = arith.trunci " + reg.name + " : " + type + " to i64";
+        generator.addLine(line);
+        generator.addLine("%condition"+condition_id+" = arith.cmpi ne," +cond_reg+", %zero_i64 : i64");  
+        Registers::REGISTER_COUNTER++;
+    }else if(std::stoi(type.substr(1)) < 64){
+        cond_reg = "%rc"+std::to_string(Registers::REGISTER_COUNTER);
+        line = cond_reg+" = arith.extui " + reg.name + " : " + type + " to i64";
+        generator.addLine(line);
+        generator.addLine("%condition"+condition_id+" = arith.cmpi ne," +cond_reg+", %zero_i64 : i64");  
         Registers::REGISTER_COUNTER++;
     }else{
-        cond_reg = condition;
+        generator.addLine("%condition"+condition_id+" = arith.cmpi ne," +reg.name+", %zero_i64 : i64");
     }
     
-    generator.addLine(line);
-    line = "scf.if "+cond_reg+" {";
+    std::string condition = "%condition"+condition_id;
+    
+    line = "scf.if "+condition+" {";
     generator.addLine(line);
     generator.startScope();
     mlir_gs->beginScope();
