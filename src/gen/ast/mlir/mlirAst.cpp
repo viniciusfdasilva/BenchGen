@@ -51,16 +51,16 @@ void MlirCondOp::gen(ProgrammingLanguageGenerator& generator) {
         cond_reg = "%rc"+std::to_string(Registers::REGISTER_COUNTER);
         line = cond_reg+" = arith.trunci " + reg.name + " : " + type + " to i64";
         generator.addLine(line);
-        generator.addLine("%condition"+condition_id+" = arith.cmpi ne," +cond_reg+", %zero_i64 : i64");  
+        generator.addLine("%condition"+condition_id+" = arith.cmpi ne," +cond_reg+", %ptr_val : i64");  
         Registers::REGISTER_COUNTER++;
     }else if(std::stoi(type.substr(1)) < 64){
         cond_reg = "%rc"+std::to_string(Registers::REGISTER_COUNTER);
         line = cond_reg+" = arith.extui " + reg.name + " : " + type + " to i64";
         generator.addLine(line);
-        generator.addLine("%condition"+condition_id+" = arith.cmpi ne," +cond_reg+", %zero_i64 : i64");  
+        generator.addLine("%condition"+condition_id+" = arith.cmpi ne," +cond_reg+", %ptr_val : i64");  
         Registers::REGISTER_COUNTER++;
     }else{
-        generator.addLine("%condition"+condition_id+" = arith.cmpi ne," +reg.name+", %zero_i64 : i64");
+        generator.addLine("%condition"+condition_id+" = arith.cmpi ne," +reg.name+", %ptr_val : i64");
         Registers::REGISTER_COUNTER++;
     }
     
